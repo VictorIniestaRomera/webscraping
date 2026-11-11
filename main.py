@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup;
 
-import requests
+import requests;
+import csv;
 
 #Select all
 url = "https://quotes.toscrape.com/"
@@ -15,12 +16,32 @@ soup = BeautifulSoup(response.text, "html.parser");
 print(soup.prettify()[:2000])
 
 #Select specific
-getDivs = soup.select("div.quote");
+quotes = [];
 
-for div in getDivs:
-    quote = div.select_one("span.text");
-    author = div.select_one("small.author");
+for phrase in soup.select("div.quote"):
+    quote = phrase.select_one("span.text");
+    author = phrase.select_one("small.author");
 
-    if quote and author:
-        print(quote.get_text(strip=True));
-        print(author.get_text(strip=True))
+    if quote is None or author is None:
+        continue;
+
+    tags = [tag.get_text(strip=True) for tag in phrase.select_one("a.tag")];
+
+    quotes.append({
+            "quote": quote.get_text(strip=True), 
+            "author": author.get_text(strip=True),
+            "tags": ", ".join(tags)
+        });
+
+    for item in quotes[:3]:
+        print(item);
+
+    fieldnames = ["quote", "author", "tags"];
+
+    with open("quotes.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames);
+
+        writer.writeheader();
+        writer.writerows(quotes);
+
+    print(f"Saved {len(quotes)} quotes to 'quotes.csv'");
