@@ -28,7 +28,7 @@ for phrase in soup.select("div.quote"):
     tags = [tag.get_text(strip=True) for tag in phrase.select_one("a.tag")];
 
     quotes.append({
-            "quote": quote.get_text(strip=True), 
+            "quote": quote.get_text(strip=True).replace('"', "'"), 
             "author": author.get_text(strip=True),
             "tags": ", ".join(tags)
         });
