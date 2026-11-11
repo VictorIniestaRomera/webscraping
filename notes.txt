@@ -1,0 +1,2 @@
+To run the streamlit code write the following on the terminal: streamlit run main.py.
+To stop the execution just click 'ctrl+c' on the terminal.

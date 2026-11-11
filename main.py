@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup;
 import requests;
 import csv;
 
+import streamlit as st;
+import pandas as pd;
+
 #Select all
 url = "https://quotes.toscrape.com/"
 
@@ -45,3 +48,9 @@ for phrase in soup.select("div.quote"):
         writer.writerows(quotes);
 
     print(f"Saved {len(quotes)} quotes to 'quotes.csv'");
+
+#Show in streamlit
+st.set_page_config(layout="wide");
+
+df = pd.DataFrame(quotes);
+st.dataframe(df, width="content");
