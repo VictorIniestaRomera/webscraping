@@ -1,56 +1,13 @@
-from bs4 import BeautifulSoup;
+from scraper import Scraper;
+from uigenerator import UIGenerator;
 
-import requests;
-import csv;
+def main():
+    scr = Scraper();
+    scr.connect();
+    scr.scrap(quoteFilter=["The"], tagsFilter=["change"]);
 
-import streamlit as st;
-import pandas as pd;
+    uig = UIGenerator();
+    uig.drawTable(scr.getQuotes());
 
-#Select all
-url = "https://quotes.toscrape.com/"
-
-response = requests.get(url, timeout=10)
-response.raise_for_status()
-
-print(response.status_code)
-
-soup = BeautifulSoup(response.text, "html.parser");
-
-print(soup.prettify()[:2000])
-
-#Select specific
-quotes = [];
-
-for phrase in soup.select("div.quote"):
-    quote = phrase.select_one("span.text");
-    author = phrase.select_one("small.author");
-
-    if quote is None or author is None:
-        continue;
-
-    tags = [tag.get_text(strip=True) for tag in phrase.select_one("a.tag")];
-
-    quotes.append({
-            "quote": quote.get_text(strip=True).replace('"', "'"), 
-            "author": author.get_text(strip=True),
-            "tags": ", ".join(tags)
-        });
-
-    for item in quotes[:3]:
-        print(item);
-
-    fieldnames = ["quote", "author", "tags"];
-
-    with open("quotes.csv", "w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames);
-
-        writer.writeheader();
-        writer.writerows(quotes);
-
-    print(f"Saved {len(quotes)} quotes to 'quotes.csv'");
-
-#Show in streamlit
-st.set_page_config(layout="wide");
-
-df = pd.DataFrame(quotes);
-st.dataframe(df, width="content");
+if __name__ == "__main__":
+    main();
