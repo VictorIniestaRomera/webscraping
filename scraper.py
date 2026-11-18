@@ -10,6 +10,8 @@ class Scraper:
     soup: BeautifulSoup;
 
     quotes = [];
+    authors = [];
+    texts = [];
 
     def __init__(self):
         pass;
@@ -25,7 +27,7 @@ class Scraper:
     def printSoup(self) -> None:
         print(self.soup.prettify()[:2000]);
 
-    def scrap(self, authorFilter: list = None, tagsFilter: list = None, quoteFilter: list = None) -> None:
+    def scrap(self, authorFilter: list = None, tagsFilter: list = None, textFilter: list = None) -> None:
         for phrase in self.soup.select("div.quote"):
             quote = phrase.select_one("span.text");
             author = phrase.select_one("small.author");
@@ -33,7 +35,7 @@ class Scraper:
             if quote is None or author is None:
                 continue;
 
-            quoteText = quote.get_text(strip=True);
+            text = quote.get_text(strip=True);
             authorText = author.get_text(strip=True);
             tags = [tag.get_text(strip=True) for tag in phrase.select_one("a.tag")];
 
@@ -61,11 +63,11 @@ class Scraper:
                 if not cont:
                     continue;
 
-            if quoteFilter is not None:
+            if textFilter is not None:
                 cont = False;
 
-                for flag in quoteFilter:
-                    if flag in quoteText:
+                for flag in textFilter:
+                    if flag in text:
                         cont = True;
 
                         break;
@@ -74,10 +76,16 @@ class Scraper:
                     continue;
 
             self.quotes.append({
-                "quote": quoteText.replace('"', "'"), 
+                "quote": text.replace('"', "'"), 
                 "author": authorText,
                 "tags": ", ".join(tags)
             });
+
+            if authorText not in self.authors:
+                self.authors.append(authorText);
+
+            if text not in self.texts:
+                self.texts.append(text);
 
             for item in self.quotes[:3]:
                 print(item);
@@ -94,3 +102,9 @@ class Scraper:
 
     def getQuotes(self) -> list:
         return self.quotes;
+
+    def getAuthors(self) -> list:
+        return self.authors;
+
+    def getTexts(self) -> list:
+        return self.texts;
