@@ -79,12 +79,6 @@ class Scraper:
                 "tags": ", ".join(tags)
             });
 
-            if authorText not in self.authors:
-                self.authors.append(authorText);
-
-            if text not in self.texts:
-                self.texts.append(text);
-
             for item in self.quotes[:3]:
                 print(item);
 
