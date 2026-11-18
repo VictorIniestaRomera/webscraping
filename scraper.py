@@ -10,8 +10,6 @@ class Scraper:
     soup: BeautifulSoup;
 
     quotes = [];
-    authors = [];
-    texts = [];
 
     def __init__(self):
         pass;
@@ -102,9 +100,3 @@ class Scraper:
 
     def getQuotes(self) -> list:
         return self.quotes;
-
-    def getAuthors(self) -> list:
-        return self.authors;
-
-    def getTexts(self) -> list:
-        return self.texts;
